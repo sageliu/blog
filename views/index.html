@@ -1,0 +1,31 @@
+<%include ./include/header.html%>
+
+<div class="row">
+  <div class="col-sm-4 col-sm-offset-4">
+    这里是首页
+
+      <%article.map((article,index)=>{%>
+    <div class="media">
+
+
+  <div class="media-left">
+        <a href="##">
+          <img src="<%=article.user&&article.user.avatar%>" alt="<%=article.user.username%>" class="media-object avatar">
+        </a>
+      </div>
+      <div class="media-body">
+        <h4 class="media-heading">
+          <a href="/article/detail/<%=article._id%>">
+            <%=article.title%>
+          </a>
+        </h4>
+        <p><%=article.content%></p>
+      </div>
+    </div>
+
+
+      <%})%>
+  </div>
+</div>
+
+<%include ./include/footer.html%>

@@ -1,13 +1,15 @@
 let express = require('express');
 let path=require('path');
 let bodyParse=require('body-parser');
-
 let session = require('express-session')
+let MongoStore=require('connect-mongo')(session);//注意这里有参数
+
 //这是一个消息中间件，此中间件负责向session读消息，写消息，所以要放在session后面
 let flash=require('connect-flash');
 //路由中间件
 let index=require('./routes/index')
 let user=require('./routes/user')
+let article=require('./routes/article')
 let app = express();
 //使用bodyPaese中间件，得到请求体，会在req上增加一个body属性
 app.use(bodyParse.urlencoded({extends:true}))
@@ -15,7 +17,10 @@ app.use(bodyParse.urlencoded({extends:true}))
 app.use(session({
   resave:true,
   saveUninitialized:true,
-  secret:'secret'
+  secret:'secret',
+  store:new MongoStore({//指定session在数据库中的存放位置
+    url:'mongodb://127.0.0.1/myblog'//这样设置就可以保存用户登录状态到数据库了
+  })
 }))
 //使用了此中间件，会增加req.flash属性，
 // req.flash(type)//读消息，并销毁消息，表示写入的消息只能读取一次
@@ -25,6 +30,7 @@ app.use(function (req,res,next) {//此中间件用来给模板的公共变量赋
 //  把session的user属性取出来，赋值给模板
 //  res.locals上的属性会传输到页面
   res.locals.user=req.session.user;
+
   //req.flash('success')取出来是一个数组
   res.locals.success=req.flash('success').toString();//对象不能在模板中直接渲染，需要转换成数组
   res.locals.error=req.flash('error').toString();
@@ -42,7 +48,9 @@ app.engine('html',require('ejs').__express)
 
 app.use('/',index);
 app.use('/user',user);
+app.use('/article',article);
 //参数是静态文件根目录的绝对路径，当客户端访问服务器的静态文件时，此中间件会去静态文件根目录查找，如果没有，会去找自己写的文件
 app.use(express.static(path.resolve('node_modules')));
+app.use(express.static(path.resolve('upload')));//把上传的文件的路径作为文件的静态文件路径
 
 app.listen(8081);//app是一个请求监听函数

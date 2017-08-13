@@ -8,6 +8,13 @@
   <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
   <!--临时开发时候用的，上线的时候要删掉-->
   <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.css">
+  <style>
+    .avatar{
+      width: 30px;
+      height: 30px;
+      border-radius:5px;
+    }
+  </style>
 </head>
 <body>
 <div class="wrap">
@@ -37,12 +44,27 @@
             </form>
             <ul class="nav navbar-nav navbar-right">
               <%if(user){%>
+              <li><a href="/article/add">发表文章</a></li>
               <li><a href="/user/signout">退出</a></li>
               <%}else{%>
               <li class="active"><a href="/user/signup">注册</a></li>
               <li><a href="/user/signin">登录</a></li>
               <%}%>
             </ul>
+            <%if(user){%>
+            <ul class="nav navbar-nav navbar-right">
+              <li>
+                <a href="">
+                  <%=user.username%>
+                </a>
+              </li>
+              <li>
+                <a href="">
+                  <img src="<%=user.avatar%>" alt="" class="avatar">
+                </a>
+              </li>
+            </ul>
+            <%}%>
 
           </div>
         </div>
